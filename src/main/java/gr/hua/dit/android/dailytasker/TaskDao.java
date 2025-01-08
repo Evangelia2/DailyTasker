@@ -13,4 +13,7 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks")
     List<Task> getAllTasks();
+
+    @Query("DELETE FROM tasks WHERE uid = :taskId")
+    int deleteTaskById(int taskId); // Returns the number of rows affected
 }

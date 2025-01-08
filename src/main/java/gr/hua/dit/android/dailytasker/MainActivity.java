@@ -2,6 +2,7 @@ package gr.hua.dit.android.dailytasker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -44,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, CreateTaskActivity.class);
             startActivity(intent);
         });
+
+        Button buttonDeleteTask = findViewById(R.id.buttonDeleteTask);
+        buttonDeleteTask.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DeleteTaskActivity.class);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -52,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Reload tasks when returning to the MainActivity
         List<Task> tasks = taskDatabase.taskDao().getAllTasks();
-        taskAdapter.updateTasks(tasks);
+        Log.d("MainActivity", "Tasks loaded: " + tasks.size());
+
+        if (taskAdapter != null) {
+            taskAdapter.updateTasks(tasks);
+        } else {
+            // Fallback to initialize adapter in case of null
+            taskAdapter = new TaskAdapter(tasks);
+            RecyclerView recyclerView = findViewById(R.id.recyclerViewTasks);
+            recyclerView.setAdapter(taskAdapter);
+        }
     }
+
 }

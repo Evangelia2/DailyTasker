@@ -1,6 +1,7 @@
 package gr.hua.dit.android.dailytasker;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -62,6 +63,8 @@ public class CreateTaskActivity extends AppCompatActivity {
             taskDatabase.taskDao().insertTask(task);
 
             Toast.makeText(this, "Task saved successfully!", Toast.LENGTH_SHORT).show();
+            Log.d("CreateTaskActivity", "Task saved: " + task.toString());
+
             finish(); // Close the activity
         });
     }
