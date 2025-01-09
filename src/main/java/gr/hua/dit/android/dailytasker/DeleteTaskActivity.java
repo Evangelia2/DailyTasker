@@ -7,11 +7,17 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
+
+import java.util.List;
 
 public class DeleteTaskActivity extends AppCompatActivity {
 
     private TaskDatabase taskDatabase;
+    private RecyclerView recyclerView;
+    private TaskAdapter taskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +28,16 @@ public class DeleteTaskActivity extends AppCompatActivity {
         taskDatabase = Room.databaseBuilder(getApplicationContext(),
                 TaskDatabase.class, "task-database").allowMainThreadQueries().build();
 
+        // Initialize RecyclerView
+        recyclerView = findViewById(R.id.recyclerViewAllTasks);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Load tasks from database and set up the adapter
+        List<Task> tasks = taskDatabase.taskDao().getAllTasks();
+        taskAdapter = new TaskAdapter(tasks);
+        recyclerView.setAdapter(taskAdapter);
+
+        // Handle delete task button click
         EditText editTextTaskId = findViewById(R.id.editTextTaskId);
         Button buttonDeleteTask = findViewById(R.id.buttonDeleteTask);
 
@@ -48,5 +64,11 @@ public class DeleteTaskActivity extends AppCompatActivity {
                 Toast.makeText(this, "Invalid Task ID. Please enter a valid number.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void refreshTasks() {
+        // Reload tasks from database and update RecyclerView
+        List<Task> updatedTasks = taskDatabase.taskDao().getAllTasks();
+        taskAdapter.updateTasks(updatedTasks);
     }
 }

@@ -40,13 +40,13 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(taskAdapter);
 
         // Add a button to navigate to the CreateTaskActivity
-        Button createTaskButton = findViewById(R.id.buttonCreateTask);
+        Button createTaskButton = findViewById(R.id.btnAddTask);
         createTaskButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CreateTaskActivity.class);
             startActivity(intent);
         });
 
-        Button buttonDeleteTask = findViewById(R.id.buttonDeleteTask);
+        Button buttonDeleteTask = findViewById(R.id.btnDeleteTask);
         buttonDeleteTask.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, DeleteTaskActivity.class);
             startActivity(intent);

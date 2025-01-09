@@ -30,6 +30,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
         holder.shortNameTextView.setText(task.getShortName());
+        holder.taskIdTextView.setText("ID: " + task.getUid());
         holder.statusTextView.setText(task.getStatus());
     }
 
@@ -46,12 +47,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView shortNameTextView;
+        TextView taskIdTextView;
         TextView statusTextView;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             shortNameTextView = itemView.findViewById(R.id.textViewShortName);
+            taskIdTextView = itemView.findViewById(R.id.textViewTaskId);
             statusTextView = itemView.findViewById(R.id.textViewStatus);
         }
     }
+
 }
