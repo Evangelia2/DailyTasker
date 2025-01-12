@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="task_red">#FFCDD2</color>
+    <color name="task_blue">#BBDEFB</color>
+    <color name="task_yellow">#FFF9C4</color>
+    <color name="task_green">#C8E6C9</color>
+    <color name="task_purple">#E1BEE7</color>
+    <color name="task_orange">#FFE0B2</color>
+    <color name="task_cyan">#B2EBF2</color>
+
 </resources>
