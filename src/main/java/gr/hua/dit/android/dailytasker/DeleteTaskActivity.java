@@ -56,7 +56,7 @@ public class DeleteTaskActivity extends AppCompatActivity {
                 Log.d("DeleteTaskActivity", "Task ID: " + taskId + ", Rows Affected: " + rowsAffected);
 
                 if (rowsAffected > 0) {
-                    Toast.makeText(this, "Task deleted successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Task deleted successfully! Rows affected:"+ rowsAffected, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "No task found with the provided ID.", Toast.LENGTH_SHORT).show();
                 }

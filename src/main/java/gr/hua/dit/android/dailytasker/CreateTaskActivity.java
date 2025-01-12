@@ -1,6 +1,8 @@
 package gr.hua.dit.android.dailytasker;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +31,27 @@ public class CreateTaskActivity extends AppCompatActivity {
         EditText locationInput = findViewById(R.id.editTextLocation);
         Button saveButton = findViewById(R.id.buttonSaveTask);
 
+        // Ensure the start time is in __:__ format (e.g., 12:30)
+        startTimeInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int after) {
+                String input = charSequence.toString();
+
+                // Automatically add the colon after the first two digits
+                if (input.length() == 2 && !input.contains(":")) {
+                    startTimeInput.setText(input + ":");
+                    startTimeInput.setSelection(startTimeInput.getText().length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
+
         saveButton.setOnClickListener(v -> {
             String shortName = shortNameInput.getText().toString().trim();
             String description = descriptionInput.getText().toString().trim();
@@ -44,9 +67,38 @@ public class CreateTaskActivity extends AppCompatActivity {
             int duration;
             try {
                 duration = Integer.parseInt(durationText);
-                if (duration <= 0) throw new NumberFormatException();
+                if (duration <= 0 || duration > 24) {
+                    throw new NumberFormatException();
+                }
             } catch (NumberFormatException e) {
-                Toast.makeText(this, "Duration must be a positive number!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Duration must be a positive number and less than or equal to 24 hours!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Validate the start time format __:__ and check if the hours and minutes are valid
+            if (!startTime.matches("\\d{2}:\\d{2}")) {
+                Toast.makeText(this, "Start time must be in the format HH:mm!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Split the time into hours and minutes
+            String[] timeParts = startTime.split(":");
+            int hours, minutes;
+            try {
+                hours = Integer.parseInt(timeParts[0]);
+                minutes = Integer.parseInt(timeParts[1]);
+
+                // Validate hours and minutes
+                if (hours < 0 || hours > 23) {
+                    Toast.makeText(this, "Hours must be between 00 and 23!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (minutes < 0 || minutes > 59) {
+                    Toast.makeText(this, "Minutes must be between 00 and 59!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid time format. Please ensure hours and minutes are valid.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
