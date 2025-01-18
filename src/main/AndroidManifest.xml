@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".CreateTaskActivity" />
         <activity android:name=".DeleteTaskActivity" />
+        <activity android:name=".TaskDetailsActivity" />
+
 
 
     </application>

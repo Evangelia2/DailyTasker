@@ -36,4 +36,29 @@ public class Task {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    // Update status based on the current time
+    public void updateStatus(String currentTime) {
+        if (status.equals("expired")) return;
+
+        if (currentTime.compareTo(startTime) > 0) {
+            if (currentTime.compareTo(calculateEndTime()) > 0) {
+                status = "expired";
+            } else {
+                status = "in-progress";
+            }
+        }
+    }
+
+    private String calculateEndTime() {
+        // Assuming startTime is in HH:mm format
+        String[] timeParts = startTime.split(":");
+        int hours = Integer.parseInt(timeParts[0]) + duration;
+        int minutes = Integer.parseInt(timeParts[1]);
+        if (hours >= 24) {
+            hours -= 24; // Adjust for 24-hour time format
+        }
+        return String.format("%02d:%02d", hours, minutes);
+    }
+
 }

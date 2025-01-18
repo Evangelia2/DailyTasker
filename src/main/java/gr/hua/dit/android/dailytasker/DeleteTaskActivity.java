@@ -1,5 +1,6 @@
 package gr.hua.dit.android.dailytasker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -34,7 +35,11 @@ public class DeleteTaskActivity extends AppCompatActivity {
 
         // Load tasks from database and set up the adapter
         List<Task> tasks = taskDatabase.taskDao().getAllTasks();
-        taskAdapter = new TaskAdapter(tasks);
+        taskAdapter = new TaskAdapter(tasks, task -> {
+            Intent intent = new Intent(DeleteTaskActivity.this, TaskDetailsActivity.class);
+            intent.putExtra("taskId", task.getUid()); // Pass the task ID to the new activity
+            startActivity(intent);
+        });
         recyclerView.setAdapter(taskAdapter);
 
         // Handle delete task button click
