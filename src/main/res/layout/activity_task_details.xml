@@ -5,15 +5,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Task ID -->
-    <TextView
-        android:id="@+id/taskId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Task ID: 1"
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
-
     <!-- Task Name -->
     <TextView
         android:id="@+id/taskName"
@@ -24,21 +15,21 @@
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
 
+    <!-- Task ID -->
+    <TextView
+        android:id="@+id/taskId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Task ID: 1"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
     <!-- Task Description -->
     <TextView
         android:id="@+id/taskDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Description: This is a sample task description."
-        android:textSize="16sp"
-        android:layout_marginBottom="8dp" />
-
-    <!-- Task Duration -->
-    <TextView
-        android:id="@+id/taskDuration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Duration: 2 hours"
         android:textSize="16sp"
         android:layout_marginBottom="8dp" />
 
@@ -51,14 +42,14 @@
         android:textSize="16sp"
         android:layout_marginBottom="8dp" />
 
-    <!-- Task Location -->
+    <!-- Task Duration -->
     <TextView
-        android:id="@+id/taskLocation"
+        android:id="@+id/taskDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Location: Office"
+        android:text="Duration: 2 hours"
         android:textSize="16sp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="8dp" />
 
     <!-- Task Status -->
     <TextView
@@ -69,6 +60,15 @@
         android:textSize="16sp"
         android:layout_marginBottom="16dp" />
 
+    <!-- Task Location -->
+    <TextView
+        android:id="@+id/taskLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location: Office"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
+
     <!-- Button to mark task as completed -->
     <Button
         android:id="@+id/btnCompleteTask"
@@ -76,4 +76,5 @@
         android:layout_height="wrap_content"
         android:text="Mark as Completed"
         android:layout_marginBottom="16dp" />
+    
 </LinearLayout>
