@@ -12,11 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,9 +52,30 @@ public class MainActivity extends AppCompatActivity {
 
         // Load tasks from database
         List<Task> tasks = taskDatabase.taskDao().getAllTasks();
+        for (Task task : tasks) {
+            Log.d("MainActivity", "Task Loaded: ID=" + task.getUid() +
+                    ", Name=" + task.getShortName() +
+                    ", Duration=" + task.getDuration());
+        }
 
-        // Initialize the adapter and set it to the RecyclerView
-        taskAdapter = new TaskAdapter(tasks);
+        // Set up the adapter with a click listener
+        taskAdapter = new TaskAdapter(tasks, task -> {
+            Intent intent = new Intent(MainActivity.this, TaskDetailsActivity.class);
+            intent.putExtra("task_id", String.valueOf(task.getUid())); // Pass the task ID to the new activity
+            intent.putExtra("task_name", task.getShortName());
+            intent.putExtra("task_status", task.getStatus());
+            intent.putExtra("task_description", task.getDescription());
+            intent.putExtra("task_duration", String.valueOf(task.getDuration()));
+            Log.d("MainActivity", "Passing Duration: " + task.getDuration());
+
+            intent.putExtra("task_start_time", task.getStartTime());
+            intent.putExtra("task_location", task.getLocation());
+
+            // Add other task details if necessary
+            startActivity(intent);
+        });
+
+
         recyclerView.setAdapter(taskAdapter);
 
         // Add a button to navigate to the CreateTaskActivity
@@ -65,24 +90,29 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, DeleteTaskActivity.class);
             startActivity(intent);
         });
+
+        // Schedule periodic task updates
+        WorkManager workManager = WorkManager.getInstance(this);
+        PeriodicWorkRequest taskStatusCheckRequest =
+                new PeriodicWorkRequest.Builder(TaskStatusUpdateWorker.class, 1, TimeUnit.HOURS)
+                        .build();
+        workManager.enqueueUniquePeriodicWork(
+                "TaskStatusUpdateWork",
+                ExistingPeriodicWorkPolicy.REPLACE,
+                taskStatusCheckRequest
+        );
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        // Reload tasks when returning to the MainActivity
-        List<Task> tasks = taskDatabase.taskDao().getAllTasks();
-        Log.d("MainActivity", "Tasks loaded: " + tasks.size());
+        // Load active and ordered tasks
+        List<Task> activeTasks = taskDatabase.taskDao().getActiveTasksOrdered();
+        Log.d("MainActivity", "Active Tasks loaded: " + activeTasks.size());
 
-        if (taskAdapter != null) {
-            taskAdapter.updateTasks(tasks);
-        } else {
-            // Fallback to initialize adapter in case of null
-            taskAdapter = new TaskAdapter(tasks);
-            RecyclerView recyclerView = findViewById(R.id.recyclerViewTasks);
-            recyclerView.setAdapter(taskAdapter);
-        }
+        // Update RecyclerView with the filtered and sorted list
+        taskAdapter.updateTasks(activeTasks);
     }
 
 }

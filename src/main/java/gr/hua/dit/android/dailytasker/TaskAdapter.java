@@ -1,5 +1,6 @@
 package gr.hua.dit.android.dailytasker;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,15 @@ import java.util.Random;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private List<Task> tasks;
+    private OnTaskClickListener onTaskClickListener;
 
-    public TaskAdapter(List<Task> tasks) {
+    public interface OnTaskClickListener {
+        void onTaskClick(Task task);
+    }
+
+    public TaskAdapter(List<Task> tasks, OnTaskClickListener listener) {
         this.tasks = tasks;
+        this.onTaskClickListener = listener;
     }
 
     @NonNull
@@ -58,6 +65,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 ContextCompat.getColor(holder.itemView.getContext(), randomColor)
         );
 
+        // Set click listener for the CardView
+        holder.taskCard.setOnClickListener(v -> {
+            if (onTaskClickListener != null) {
+                Log.d("TaskAdapter", "Task clicked: " + task.getShortName());
+                onTaskClickListener.onTaskClick(task);
+            }
+        });
 
     }
 
