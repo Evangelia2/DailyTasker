@@ -25,6 +25,13 @@
         <activity android:name=".DeleteTaskActivity" />
         <activity android:name=".TaskDetailsActivity" />
 
+        <provider
+            android:name=".TaskContentProvider"
+            android:authorities="gr.hua.dit.android.dailytasker.provider"
+            android:exported="true"
+            android:grantUriPermissions="true">
+        </provider>
+
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

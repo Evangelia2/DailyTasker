@@ -1,5 +1,7 @@
 package gr.hua.dit.android.dailytasker;
 
+import android.database.Cursor;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -35,5 +37,17 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE status != 'Completed'")
     List<Task> getIncompleteTasks();
+
+    @Query("SELECT * FROM tasks")
+    Cursor getAllTasksCursor();
+
+    @Query("SELECT * FROM tasks WHERE uid = :taskId")
+    Cursor getTaskByIdCursor(int taskId);
+
+    @Insert
+    long insertTaskAndReturnId(Task task);
+
+    @Update
+    int updateTaskAndReturnRows(Task task);
 
 }

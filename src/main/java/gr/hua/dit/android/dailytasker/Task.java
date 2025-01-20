@@ -1,5 +1,7 @@
 package gr.hua.dit.android.dailytasker;
 
+import android.content.ContentValues;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,11 +10,17 @@ import androidx.room.PrimaryKey;
 public class Task {
     @PrimaryKey(autoGenerate = true)
     private int uid;
+    @ColumnInfo(name = "shortName")
     private String shortName;
+    @ColumnInfo(name = "description")
     private String description;
+    @ColumnInfo(name = "startTime")
     private String startTime; // Use a string for simplicity, format: HH:mm
+    @ColumnInfo(name = "duration")
     private int duration;// Duration in hours
+    @ColumnInfo(name = "status")
     private String status; // "recorded"
+    @ColumnInfo(name = "location")
     private String location; // Optional, can be empty
 
     // Getters and Setters
@@ -59,6 +67,30 @@ public class Task {
             hours -= 24; // Adjust for 24-hour time format
         }
         return String.format("%02d:%02d", hours, minutes);
+    }
+
+    // Implement the fromContentValues method
+    public static Task fromContentValues(ContentValues values) {
+        Task task = new Task();
+        if (values.containsKey("shortName")) {
+            task.setShortName(values.getAsString("shortName"));
+        }
+        if (values.containsKey("description")) {
+            task.setDescription(values.getAsString("description"));
+        }
+        if (values.containsKey("startTime")) {
+            task.setStartTime(values.getAsString("startTime"));
+        }
+        if (values.containsKey("duration")) {
+            task.setDuration(values.getAsInteger("duration"));
+        }
+        if (values.containsKey("status")) {
+            task.setStatus(values.getAsString("status"));
+        }
+        if (values.containsKey("location")) {
+            task.setLocation(values.getAsString("location"));
+        }
+        return task;
     }
 
 }
