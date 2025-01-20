@@ -76,5 +76,5 @@
         android:layout_height="wrap_content"
         android:text="Mark as Completed"
         android:layout_marginBottom="16dp" />
-    
+
 </LinearLayout>

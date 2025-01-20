@@ -2,6 +2,7 @@ package gr.hua.dit.android.dailytasker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,9 @@ import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -91,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button exportTasksButton = findViewById(R.id.btnExportTasks);
+        exportTasksButton.setOnClickListener(v -> exportTasksToFile());
+
         // Schedule periodic task updates
         WorkManager workManager = WorkManager.getInstance(this);
         PeriodicWorkRequest taskStatusCheckRequest =
@@ -101,6 +108,44 @@ public class MainActivity extends AppCompatActivity {
                 ExistingPeriodicWorkPolicy.REPLACE,
                 taskStatusCheckRequest
         );
+    }
+
+    private void exportTasksToFile() {
+        // Fetch tasks that are not completed
+        List<Task> incompleteTasks = taskDatabase.taskDao().getActiveTasksOrdered();
+
+        // Prepare the file content
+        StringBuilder fileContent = new StringBuilder();
+        fileContent.append("<html><head><title>Incomplete Tasks</title></head><body>");
+        fileContent.append("<h1>Incomplete Tasks</h1>");
+        for (Task task : incompleteTasks) {
+            fileContent.append("<div style='margin-bottom:20px;'>")
+                    .append("<strong>Name:</strong> ").append(task.getShortName()).append("<br>")
+                    .append("<strong>ID:</strong> ").append(task.getUid()).append("<br>")
+                    .append("<strong>Description:</strong> ").append(task.getDescription()).append("<br>")
+                    .append("<strong>Status:</strong> ").append(task.getStatus()).append("<br>")
+                    .append("<strong>Start Time:</strong> ").append(task.getStartTime()).append("<br>")
+                    .append("<strong>Duration:</strong> ").append(task.getDuration()).append("<br>")
+                    .append("<strong>Location:</strong> ").append(task.getLocation()).append("<br>")
+                    .append("</div>");
+        }
+        fileContent.append("</body></html>");
+
+        // Define the file location
+        File exportDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Tasks");
+        if (!exportDir.exists()) {
+            exportDir.mkdirs(); // Create the directory if it doesn't exist
+        }
+        File file = new File(exportDir, "incomplete_tasks.html");
+
+        // Write to the file
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(fileContent.toString());
+            Toast.makeText(this, "Tasks exported to " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to export tasks: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

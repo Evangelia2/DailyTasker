@@ -33,4 +33,7 @@ public interface TaskDao {
             "datetime(startTime) ASC")
     List<Task> getActiveTasksOrdered();
 
+    @Query("SELECT * FROM tasks WHERE status != 'Completed'")
+    List<Task> getIncompleteTasks();
+
 }
