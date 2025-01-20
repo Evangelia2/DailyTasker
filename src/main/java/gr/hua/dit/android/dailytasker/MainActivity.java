@@ -98,6 +98,14 @@ public class MainActivity extends AppCompatActivity {
         Button exportTasksButton = findViewById(R.id.btnExportTasks);
         exportTasksButton.setOnClickListener(v -> exportTasksToFile());
 
+        // Add a button to show completed tasks
+        Button btnCompletedTasks = findViewById(R.id.btnCompletedTasks);
+        btnCompletedTasks.setOnClickListener(v -> {
+            // Query the database for completed tasks
+            List<Task> completedTasks = taskDatabase.taskDao().getCompletedTasks();
+            taskAdapter.updateTasks(completedTasks); // Update RecyclerView with completed tasks
+        });
+
         // Schedule periodic task updates
         WorkManager workManager = WorkManager.getInstance(this);
         PeriodicWorkRequest taskStatusCheckRequest =

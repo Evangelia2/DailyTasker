@@ -50,4 +50,7 @@ public interface TaskDao {
     @Update
     int updateTaskAndReturnRows(Task task);
 
+    @Query("SELECT * FROM tasks WHERE status = 'Completed'")
+    List<Task> getCompletedTasks(); // Query for completed tasks
+
 }
