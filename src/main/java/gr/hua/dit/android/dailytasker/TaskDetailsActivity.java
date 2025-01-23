@@ -1,14 +1,19 @@
 package gr.hua.dit.android.dailytasker;
 
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
+
+import java.util.List;
 
 public class TaskDetailsActivity extends AppCompatActivity {
 
@@ -19,6 +24,11 @@ public class TaskDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
+
+        Button viewOnMapButton = findViewById(R.id.btnViewOnMap);
+
+        // Retrieve the Task object (assumes it's passed via Intent)
+        currentTask = (Task) getIntent().getSerializableExtra("task_key");
 
         // Get references to the TextViews and Button
         TextView taskIdTextView = findViewById(R.id.taskId);
@@ -59,7 +69,23 @@ public class TaskDetailsActivity extends AppCompatActivity {
         taskDurationTextView.setText("Duration: " + (taskDuration != null ? taskDuration : "N/A"));
         taskStartTimeTextView.setText("Start Time: " + (taskStartTime != null ? taskStartTime : "N/A"));
         taskLocationTextView.setText("Location: " + (taskLocation != null ? taskLocation : "N/A"));
+
         taskStatusTextView.setText("Status: " + (taskStatus != null ? taskStatus : "N/A"));
+
+        intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps"));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            Log.d("TaskDetailsActivity", "Google Maps app is installed.");
+        } else {
+            Log.e("TaskDetailsActivity", "Google Maps app is NOT installed.");
+        }
+
+
+        // Show the button if the location is not empty
+        if (taskLocation != null && !taskLocation.isEmpty()) {
+            viewOnMapButton.setVisibility(View.VISIBLE);
+            viewOnMapButton.setOnClickListener(v -> viewOnGoogleMaps());
+        }
+
 
         // Set up the button to mark the task as completed
         completeTaskButton.setOnClickListener(v -> {
@@ -71,7 +97,37 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 Toast.makeText(this, "Task ID is missing", Toast.LENGTH_SHORT).show();
             }
         });
+
+        Log.d("TaskDetailsActivity", "Location to be opened: " + taskLocation);
+
     }
+    private void viewOnGoogleMaps() {
+        try {
+            // Get location from currentTask or Intent extras
+            String location = currentTask != null ? currentTask.getLocation() : null;
+            if (location == null) {
+                location = getIntent().getStringExtra("task_location");
+            }
+            Log.d("TaskDetailsActivity", "Location to open: " + location);
+
+            if (location != null && !location.isEmpty()) {
+                // Construct the Google Maps URL for the search query
+                String googleMapsUri = "https://www.google.com/maps/search/?api=1&query=" + Uri.encode(location);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(googleMapsUri));
+                startActivity(mapIntent);
+
+            } else {
+                Toast.makeText(this, "No valid location provided.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error occurred while opening location.", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 
     // Method to update task status in the database
     private void updateTaskStatusInDatabase(String taskId, String newStatus) {

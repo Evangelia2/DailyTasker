@@ -39,7 +39,9 @@
             android:id="@+id/editTextLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Location (optional)" />
+            android:hint="Location (optional)"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"/>
 
         <Button
             android:id="@+id/buttonSaveTask"
