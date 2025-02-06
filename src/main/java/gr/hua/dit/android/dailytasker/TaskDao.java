@@ -1,5 +1,8 @@
 package gr.hua.dit.android.dailytasker;
 
+import android.database.Cursor;
+
+import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -9,6 +12,7 @@ import java.util.List;
 
 @Dao
 public interface TaskDao {
+
     @Insert
     void insertTask(Task task);
 
@@ -23,5 +27,30 @@ public interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE uid = :taskId")
     Task getTaskById(int taskId);
+
+    @Query("SELECT * FROM tasks WHERE status != 'Completed' " +
+            "ORDER BY " +
+            "CASE WHEN status = 'expired' THEN 1 ELSE 0 END DESC, " + // Urgent (expired)
+            "CASE WHEN status = 'In Progress' THEN 1 ELSE 0 END DESC, " +                // In Progress
+            "datetime(startTime) ASC")
+    List<Task> getActiveTasksOrdered();
+
+    @Query("SELECT * FROM tasks WHERE status != 'Completed'")
+    List<Task> getIncompleteTasks();
+
+    @Query("SELECT * FROM tasks")
+    Cursor getAllTasksCursor();
+
+    @Query("SELECT * FROM tasks WHERE uid = :taskId")
+    Cursor getTaskByIdCursor(int taskId);
+
+    @Insert
+    long insertTaskAndReturnId(Task task);
+
+    @Update
+    int updateTaskAndReturnRows(Task task);
+
+    @Query("SELECT * FROM tasks WHERE status = 'Completed'")
+    List<Task> getCompletedTasks(); // Query for completed tasks
 
 }
